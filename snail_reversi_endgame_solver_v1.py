@@ -41,7 +41,7 @@ class Solver:
     def print_info(self):
         print('Pruning_count:', self.Pruning_count)
         return
-    
+
     """
     def Ordering(self, board):
         sfen = board.return_sfen()
@@ -63,7 +63,7 @@ class Solver:
         sfen = board.return_sfen()
         if sfen in self.Ordering_moves_table.keys():
             return self.Ordering_moves_table[sfen]
-        Lmoves = board.gen_legal_moves()
+        Lmoves = board.gen_legal_index_moves()
         self.Ordering_moves_table[sfen] = Lmoves
         return Lmoves
 
@@ -78,19 +78,16 @@ class Solver:
         sfen = board.return_sfen()
         if sfen in self.Ttable.keys():
             return self.Ttable[sfen]
-        if depth <= 2:
-            moves = self.Ordering(board)
-        else:
-            moves = self.Ordering(board)
-            #moves = board.gen_legal_moves()
+        moves = self.Ordering(board)
+        #moves = board.gen_legal_moves()
         if PASS in moves:
-            board.move_from_usix(PASS)
+            board.move_from_index(PASS)
             moves_list.append(PASS)
             score = self.search(depth + 1, board, moves_list, AB)
             moves_list.pop(-1)
             return score
         for m in moves:
-            board.move_from_usix(m)
+            board.move_from_index(m)
             moves_list.append(m)
             score = self.change_score(self.search(depth + 1, board, moves_list, self.AB_change(AB)))
             moves_list.pop(-1)
@@ -115,7 +112,7 @@ class Solver:
         AB = [self.lose_score, self.win_score]
         moves_list = []
         for m in moves:
-            self.root_board.move_from_usix(m)
+            self.root_board.move_from_index(m)
             moves_list.append(m)
             score = self.change_score(self.search(1, self.root_board, moves_list, self.AB_change(AB)))
             moves_list.pop(-1)
